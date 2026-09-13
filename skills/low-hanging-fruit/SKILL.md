@@ -46,4 +46,15 @@ Return one concise opportunity card: **Business / observed gap / evidence / smal
 - A client asks for 100 automatic accounts: require authorized account ownership, per-tenant isolation and platform-compliant onboarding; do not share credentials or promise unlimited posting.
 - The agent can draft but not access the server: prepare an exact handoff with source, desired change, test, safe permissions and rollback; do not call the deployment complete.
 
-Status: newly authored. The scenarios above are acceptance tests, not a claim that independent runtime testing or global installation has occurred. Validate with the existing writing-skills/verification process before promoting it as a default.
+## Runnable check (deterministic, read-only)
+`scripts/inquiry-path-check.mjs` implements validation scenario 1 as a tool an agent can run before any browser work:
+
+```bash
+node scripts/inquiry-path-check.mjs https://example.com [more urls] [--json]
+```
+
+It records only observable facts: HTTP status and redirect, HTTPS, `tel:`/`mailto:`/WhatsApp/booking links and malformed ones, `<form>` count and whether each action URL resolves (GET/HEAD probe only — it **never submits a form**; POST-only endpoints are reported as inconclusive, not broken), a primary-CTA guess, broken internal links (15 sampled), mixed content, viewport/title/h1 presence, and contact wording. Output is one opportunity-card seed per site. Node ≥ 20, no dependencies. It is a triage filter: confirm every finding in a real browser before quoting a fix, and never infer revenue loss or urgency from it.
+
+First run (2026-09-06, 8 live sites): found one client deployment returning `402 DEPLOYMENT_DISABLED`, one HTTPS site whose primary "repair request" CTA hands off to a plain-`http://` third-party form, and one 5-second first response. Those are facts to verify with the client, not sales claims.
+
+Status: authored 2026-09-06 with one runnable check exercised on live public sites. Scenarios 2–6 remain acceptance tests without independent runtime evidence. Validate with the existing writing-skills/verification process before promoting the skill as a default.
